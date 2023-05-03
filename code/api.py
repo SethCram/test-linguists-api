@@ -123,7 +123,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/upload/")
+@app.post("/api/upload/")
 def upload(file: UploadFile = File(...)):
     """_Upload a database file into the file system._
 
@@ -155,7 +155,7 @@ def upload(file: UploadFile = File(...)):
     
     return {"message": f"Successfully uploaded {file.filename} to {new_file_path}"}
 
-@app.post("/upload/sql")
+@app.post("/api/upload/sql")
 def uploadSql(file: UploadFile = File(...)):
     """_Uploads an sql file into the file system.
     Generates an sqlite3 formatted file from the sql file.
