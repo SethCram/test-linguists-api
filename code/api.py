@@ -225,5 +225,69 @@ def uploadSql(file: UploadFile = File(...)):
         
     return {"message": f"Successfully uploaded {file.filename} to {sql_file_path} and {db_filename} to {db_file_path}"}
 
+@app.get("/api/getDatabases/")
+def getDatabases():
+    """_Get a list of the queryable database names_
+
+    Raises:
+        HTTPException: _error in listing databases_
+
+    Returns:
+        _list_: _database names as strings_
+    """
+    try:
+        #get all names in db folder
+        db_folders = os.listdir("database")
+    except:
+        raise HTTPException(status_code=500, detail="There was an error when attempting to list all the database folders.")
+    
+    #take only the directories within the db folder names
+    return [name for name in db_folders if os.path.isdir(os.path.join("database", name))]
+
+@app.delete("/api/deleteSqlDb")
+def deleteSqlDb(file_name: str):
+    """_Delete both the stored sql and database file by the given file_name.
+    If no file to delete in either location, throws an exception._
+
+    Args:
+        file_name (str): _File name without extension_
+
+    Returns:
+        _json_: _message_
+    """
+    
+    correct_msg = ""
+    
+    file_id, file_ext = os.path.splitext(file_name)
+    
+    #path to new db dir
+    db_folder_path = os.path.join("database", file_id)
+    
+    #rm fb folder + contents
+    rm_dir_code, rm_dir_msg = rm_dir(db_folder_path)
+    
+    #print locally any file removal error
+    if(rm_dir_code != 200):
+        print(rm_dir_msg)
+    else:
+        correct_msg += f"Successfully deleted {file_name} in {db_folder_path}'s contents. "
+    
+    #path to sql file
+    sql_file_path = create_sql_path(file_id)
+    
+    rm_file_code, rm_file_msg = rm_file(sql_file_path)
+    
+    #print locally any file removal error
+    if(rm_file_code != 200):
+        print(rm_file_msg)
+    else:
+        correct_msg += f"Successfully deleted {file_name} at {sql_file_path}. "
+        
+    #if neither deletion operations succeeded
+    if(rm_file_msg != 200 and rm_dir_code != 200):
+        raise HTTPException(status_code=rm_dir_code, detail=f"{rm_file_msg} {rm_dir_msg}")
+    
+    return {"message": correct_msg}
+
 # Run app
 run(app=app, host="0.0.0.0", port=8000, forwarded_allow_ips='*')
