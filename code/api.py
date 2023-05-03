@@ -226,4 +226,4 @@ def uploadSql(file: UploadFile = File(...)):
     return {"message": f"Successfully uploaded {file.filename} to {sql_file_path} and {db_filename} to {db_file_path}"}
 
 # Run app
-run(app=app, host="0.0.0.0", port=8000)
+run(app=app, host="0.0.0.0", port=8000, forwarded_allow_ips='*')
