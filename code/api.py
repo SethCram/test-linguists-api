@@ -291,6 +291,7 @@ def deleteSqlDb(file_name: str):
     
     return {"message": correct_msg}
 
+"""
 class StandaloneApplication(gunicorn.app.base.BaseApplication):
 
     def __init__(self, app, options=None):
@@ -317,6 +318,7 @@ options = {
     "worker_class": 'uvicorn.workers.UvicornWorker'
 }
 StandaloneApplication(app, options).run()
+"""
 
 # Run app
-#run(app=app, host="0.0.0.0", port=8000, forwarded_allow_ips='*')
+run(app=app, host="0.0.0.0", port=8000, forwarded_allow_ips='*')
